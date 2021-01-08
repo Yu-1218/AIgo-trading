@@ -33,7 +33,6 @@ class AlgoEvent:
                 #send a hold order
                 else:
                     return 0
-        pass
 
     def on_marketdatafeed(self, md, ab):
         pass
