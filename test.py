@@ -28,14 +28,11 @@ class AlgoEvent:
             self.arr_MA = talib.SMA(self.arr_close, timeperiod=int(self.MAperiod))
             if not numpy.isnan(self.arr_MA[-10]):
                 #send a buy order
-                if numpy.var(self.arr_close) < self.arr_MA[-1]:
+                if self.arr_close[-1] > self.arr_MA[-1]:
                     self.BuySignalMA = 1
                 #send a sell order
-                else if numpy.var(self.arr_close) > self.arr_MA[-1]:
+                else self.arr_close[-1] < self.arr_MA[-1]:
                     self.BuySignalMA = -1
-                #send a hold order
-                else:
-                    self.BuySignalMA =  0
 
     def on_marketdatafeed(self, md, ab):
         pass
