@@ -41,7 +41,34 @@ class AlgoEvent:
         pass
 
     def on_weatherdatafeed(self, wd):
-        pass
+        city = wd.city #how to choose a specific city, say HK
+        temp = wd.temperature
+        normal = 65.5 #nomal and comfortable temp in HK
+        weather = wd.weather
+        clouds = wd.clouds
+        goodcoulds = 10
+        badclouds = 80
+        if temp < normal + 5 and temp > normal + 5: #compute temp signal
+            temp_sig =  1
+        else:
+            temp_sig = -1
+        if weather == "Clear":
+            weather_sig = 1
+        else if weather == "Rain":
+            weather_sig = -1
+        else:
+            weather_sig = 0
+        if coulds > badclouds:
+            clouds_sig = 1
+        else if coulds < goodclouds:
+            clouds_sig = -1
+        else:
+            clouds_sig = 0
+        if (temp_sig + weather_sig + clouds_sig)/3 > 0:
+            #send buy signal
+        else:
+            #send sell signal or hold
+
     
     def on_econsdatafeed(self, ed):
         pass
