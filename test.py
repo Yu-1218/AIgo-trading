@@ -12,6 +12,7 @@ class AlgoEvent:
         self.BuySignalNews = 0
         self.BuySignalWeather = 0
         self.BuySignalMA = 0
+        self.keywordList = ["increase", "up", "improve"]
         
     def start(self, mEvt):
         self.myinstrument = mEvt['subscribeList'][0]
@@ -38,7 +39,17 @@ class AlgoEvent:
         pass
 
     def on_newsdatafeed(self, nd):
-        pass
+        if nd.lang=="en" and nd.category=="AMERICAS": #listen to English Americas News 
+            cnt = sum(1 for word in self.keywordList if word in nd.text)
+            # check if News content contains all desired keywords
+            if cnt==len(self.keywordList):
+                # open a new order
+            else:
+            #send sell signal or hold
+        
+
+        
+        
 
     def on_weatherdatafeed(self, wd):
         city = wd.city #how to choose a specific city, say HK
