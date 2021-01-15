@@ -32,7 +32,7 @@ class AlgoEvent:
                 if self.arr_close[-1] > self.arr_MA[-1]:
                     self.BuySignalMA = 1
                 #send a sell order
-                else self.arr_close[-1] < self.arr_MA[-1]:
+                else:
                     self.BuySignalMA = -1
 
     def on_marketdatafeed(self, md, ab):
@@ -61,13 +61,13 @@ class AlgoEvent:
             temp_sig = -1
         if weather == "Clear":
             weather_sig = 1
-        else if weather == "Rain":
+        elif weather == "Rain":
             weather_sig = -1
         else:
             weather_sig = 0
         if coulds > badclouds:
             clouds_sig = 1
-        else if coulds < goodclouds:
+        elif coulds < goodclouds:
             clouds_sig = -1
         else:
             clouds_sig = 0
@@ -102,5 +102,3 @@ class AlgoEvent:
         orderObj.ordertype = 0
         orderObj.volume = 0.01
         self.evt.sendOrder(orderObj)
-        
-    
