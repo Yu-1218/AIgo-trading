@@ -39,18 +39,14 @@ class AlgoEvent:
         pass
 
     def on_newsdatafeed(self, nd):
-        if nd.lang=="en" and nd.category=="AMERICAS": #listen to English Americas News 
+        if nd.lang=="en" and nd.category=="AMERICAS":
             cnt = sum(1 for word in self.keywordList if word in nd.text)
             # check if News content contains all desired keywords
             if cnt==len(self.keywordList):
-                # open a new order
+                self.BuySignalNews = 1
             else:
-            #send sell signal or hold
-        
-
-        
-        
-
+                self.BuySignalNews = -1
+                
     def on_weatherdatafeed(self, wd):
         city = wd.city #how to choose a specific city, say HK
         temp = wd.temperature
@@ -76,9 +72,11 @@ class AlgoEvent:
         else:
             clouds_sig = 0
         if (temp_sig + weather_sig + clouds_sig)/3 > 0:
-            #send buy signal
+            self.BuySignalWeather = 1
         else:
             #send sell signal or hold
+            self.BuySignalWeather = -1
+        self.test_sendorder(self)
 
     
     def on_econsdatafeed(self, ed):
@@ -92,3 +90,17 @@ class AlgoEvent:
 
     def on_openPositionfeed(self, op, oo, uo):
         pass
+
+    def test_sendorder(self):
+        orderObj = AlgoAPIUtil.OrderObject()
+        orderObj.instrument = self.myinstrument
+        oederObj.openclose = open
+        if 0.4*self.BuySignalMA + 0.3*self.BuySignalWeather + 0.3*self.BuySignalNews > 0:
+            orderObj.buysell = 1
+        else:
+            orderObj.buysell = -1
+        orderObj.ordertype = 0
+        orderObj.volume = 0.01
+        self.evt.sendOrder(orderObj)
+        
+    
