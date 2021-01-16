@@ -28,11 +28,11 @@ class AlgoEvent:
                 self.arr_close = self.arr_close[int(-self.MAperiod):]
             self.arr_MA = talib.SMA(self.arr_close, timeperiod=int(self.MAperiod))
             #send a buy order
-            if self.arr_close[-1] > self.arr_MA[-1]:
-                self.BuySignalMA = 1
-            #send a sell order
-            else:
-                self.BuySignalMA = -1
+            if not numpy.isnan(self.arr_MA[-1]) and not numpy.isnan(self.arr_MA[-2]):
+                if self.arr_MA[-1]>self.arr_MA[-2]:
+                    self.BuySignalMA = 1
+                else:
+                    self.BuySignalMA = -1:
 
     def on_marketdatafeed(self, md, ab):
         pass
@@ -88,11 +88,12 @@ class AlgoEvent:
         pass
 
     def on_openPositionfeed(self, op, oo, uo):
+        
         pass
 
     def test_sendorder(self):
         orderObj = AlgoAPIUtil.OrderObject()
-        orderObj.instrument = self.myinstrument
+        orderObj.instrument = mEvt['subscribeList'][0]
         oederObj.openclose = open
         if 0.4*self.BuySignalMA + 0.3*self.BuySignalWeather + 0.3*self.BuySignalNews > 0:
             orderObj.buysell = 1
