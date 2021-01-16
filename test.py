@@ -9,9 +9,6 @@ class AlgoEvent:
         self.arr_close = numpy.array([])
         self.arr_MA = numpy.array([])
         self.MAperiod = 10
-        self.BuySignalNews = 0
-        self.BuySignalWeather = 0
-        self.BuySignalMA = 0
         self.keywordList = ["increase", "up", "improve"]
         
     def start(self, mEvt):
@@ -28,11 +25,13 @@ class AlgoEvent:
                 self.arr_close = self.arr_close[int(-self.MAperiod):]
             self.arr_MA = talib.SMA(self.arr_close, timeperiod=int(self.MAperiod))
             #send a buy order
+            self.evt.consoleLog(self.arr_MA[-1])
             if not numpy.isnan(self.arr_MA[-1]) and not numpy.isnan(self.arr_MA[-2]):
                 if self.arr_MA[-1]>self.arr_MA[-2]:
-                    self.BuySignalMA = 1
+                    BuySignalMA = 1
                 else:
-                    self.BuySignalMA = -1:
+                    BuySignalMA = -1
+            self.test_sendorder(BuySignalMA,0,0)
 
     def on_marketdatafeed(self, md, ab):
         pass
@@ -42,9 +41,10 @@ class AlgoEvent:
             cnt = sum(1 for word in self.keywordList if word in nd.text)
             # check if News content contains all desired keywords
             if cnt==len(self.keywordList):
-                self.BuySignalNews = 1
+                BuySignalNews = 1
             else:
-                self.BuySignalNews = -1
+                BuySignalNews = -1
+        self.test_sendorder(0,BuySignalNews,0)
                 
     def on_weatherdatafeed(self, wd):
         city = wd.city #how to choose a specific city, say HK
@@ -71,11 +71,11 @@ class AlgoEvent:
         else:
             clouds_sig = 0
         if (temp_sig + weather_sig + clouds_sig)/3 > 0:
-            self.BuySignalWeather = 1
+            BuySignalWeather = 1
         else:
             #send sell signal or hold
-            self.BuySignalWeather = -1
-        self.test_sendorder(self)
+            BuySignalWeather = -1
+        self.test_sendorder(0,0,BuySignalWeather)
 
     
     def on_econsdatafeed(self, ed):
@@ -93,12 +93,14 @@ class AlgoEvent:
 
     def test_sendorder(self):
         orderObj = AlgoAPIUtil.OrderObject()
-        orderObj.instrument = mEvt['subscribeList'][0]
-        oederObj.openclose = open
-        if 0.4*self.BuySignalMA + 0.3*self.BuySignalWeather + 0.3*self.BuySignalNews > 0:
+        orderObj.instrument = self.myinstrument
+        orderObj.openclose = 'open'
+        self.evt.consoleLog(self.BuySignalMA)
+        total_signal = 0.4*self.BuySignalMA + 0.3*self.BuySignalWeather + 0.3*self.BuySignalNews
+        if total_signal > 0:
             orderObj.buysell = 1
         else:
             orderObj.buysell = -1
         orderObj.ordertype = 0
-        orderObj.volume = 0.01
+        orderObj.volume = total_signal
         self.evt.sendOrder(orderObj)
